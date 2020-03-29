@@ -1,0 +1,234 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <title>maitsarv GitHub demos</title>
+</head>
+<body>
+<div>
+    <style type="text/css">
+        body{
+            font-family: Segoe UI,Helvetica,Arial,sans-serif,Segoe UI Emoji;
+            margin: 0;
+        }
+        div.main-body{
+            width: 100%;
+        }
+        div.page-body{
+            width: 100%;
+            max-width: 1200px;
+            margin: 20px auto 0 auto;
+        }
+        div.container{
+            margin: 0 auto;
+            width: 100%;
+        }
+        div.page-header{
+            border-bottom: 2px solid #888888;
+            width: 100%;
+            background-color: #040404;
+            color: #ffffff;
+        }
+        div.page-header h2{
+            font-weight: 400;
+            padding: 10px 0;
+            font-size: 18px;
+            margin: 0;
+        }
+        div.page-header a{
+            text-decoration: none;
+            color: #ededed;
+        }
+        .project-item{
+            display: flex;
+            border-top: 1px solid #1c8e7d;
+            border-top-left-radius: 4px;
+            margin: 4px 0;
+            height: 108px;
+        }
+        .project-item.back-to-git{
+            margin-top: 20px;
+        }
+        .project-item a{
+            text-decoration: none;
+            color: #020202;
+        }
+        .project-item .project-name{
+            font-size: 18px;
+            margin-top: 8px;
+            margin-bottom: 8px;
+        }
+        .project-text{
+            display: flex;
+            flex-direction: column;
+        }
+        .project-desc{
+            min-width: 60%;
+            color: #4f4f4f;
+        }
+        .parent-project{
+            margin-top: auto;
+            font-style: italic;
+            font-weight: 300;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+        .parent-project a{
+            color: #4f4f4f;
+        }
+        .project-item>div:not(.project-img){
+            padding-top: 4px;
+        }
+        .git-link{
+            width: 60px;
+            margin-left: auto;
+            align-self: center;
+        }
+        .git-link a{
+            display: inline-block;
+            padding: 4px 8px;
+            min-height: 60px;
+            line-height: 60px;
+        }
+        .git-link a:hover{
+            background-color: rgba(28, 142, 125, 0.27);
+        }
+        .demo-link{
+            width: 94px;
+            align-self: center;
+            text-align: right;
+        }
+        .demo-link a{
+            display: inline-block;
+            padding: 6px;
+            padding-left: 8px;
+            min-height: 60px;
+            vertical-align: center;
+            border-radius: 0 8px 8px 0;
+        }
+        .demo-link a:hover{
+            background-color: rgba(28, 142, 125, 0.27);
+        }
+        .demo-link span{
+            font-size: 14px;
+            line-height: 60px;
+            padding: 2px;
+        }
+        .demo-link img{
+            width: 18px;
+            height: 18px;
+            vertical-align: middle;
+            transition: transform .1s;
+        }
+        .demo-link:hover img{
+            transform: scale(1.2,1.2);
+        }
+        .project-item.back-to-git .demo-link{
+            width: 180px;
+        }
+        .project-img{
+            margin-right: 12px;
+            min-height: 114px;
+            background-color: #1c8e7d;
+            padding: 10px;
+            border-bottom: 1px solid #ffffff;
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 4px;
+        }
+        .project-list .project-item:nth-last-child(2) .project-img,
+        .project-list .project-item.back-to-git .project-img{
+            min-height: 88px;
+            border-bottom: none;
+        }
+        .project-img img{
+            width: 88px;
+            height: 88px;
+            border-radius: 4% 50% 20% 50%;
+            display: inline-block;
+        }
+        .project-list .project-item:nth-child(even) .project-img>img{
+            border-radius: 50% 4% 50% 20%;
+        }
+        @media(min-width: 600px) {
+            div.container{
+                max-width: 94%;
+            }
+        }
+
+    </style>
+    <div class="page-header">
+        <div class="container">
+            <div class="title">
+                <h2>
+                    GitHub demo pages by <b><a href="https://github.com/maitsarv">maitsarv</a></b>
+                </h2>
+            </div>
+            <div class="link-gh">
+
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="main-body">
+            <div class="page-body">
+                <div id="project-list" class="project-list">
+
+                    <div class="project-item back-to-git">
+                        <div class="project-img"><img alt="" src="https://avatars1.githubusercontent.com/u/22282299?s=460&amp;u=48f6d33d6d4d73bf4a563fecb7a4472523ceb690&amp;v=4" width="160" height="160" ></div>
+                        <div class="project-name"></div>
+                        <div class="project-desc"></div>
+                        <div class="parent-project"></div>
+                        <div class="git-link"></div>
+                        <div class="demo-link"><a href="https://github.com/maitsarv"><span>Back to GitHub</span> <img src='./img/dot-arrow.svg'></a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script type="text/javascript">
+    (function () {
+        getItemRowTemplate = function(){
+            let item = document.createElement("div");
+            item.classList.add("project-item");
+            item.classList.add("project-demo");
+            item.innerHTML = '' +
+                '<div class="project-img"><a href=""><img alt="" src="" width="160" height="160" ></a></div>\n' +
+                '<div class="project-text">' +
+                '<div class="project-name"></div>\n' +
+                '<div class="project-desc"></div>\n' +
+                '<div class="parent-project"></div>\n' +
+                '</div>' +
+                '<div class="git-link"></div>\n' +
+                '<div class="demo-link"></div>';
+            return item;
+        }
+        let rows = [
+            {
+                img: "./img/plotly-ts-lit.png",
+                title: "Plotly Time Series with lit-element",
+                desc: "Demo of Plotly Time Series library implemented using lit-element.",
+                parent: ["Plotly Time Series","https://github.com/maitsarv/plotly-time-series"],
+                source: "https://github.com/maitsarv/plotly-time-series/tree/master/demo/lit",
+                demo: "https://maitsarv.github.io/plotly-ts-lielement/"
+            }
+        ];
+        let list = document.getElementById("project-list");
+        for(let r=0; r<rows.length; r++){
+            let elem = getItemRowTemplate();
+            let rs = rows[r];
+            elem.children[0].firstChild.firstChild.src = rs.img;
+            elem.children[0].firstChild.setAttribute("href",rs.demo);
+            elem.children[1].children[0].innerText = rs.title;
+            elem.children[1].children[1].innerHTML = rs.desc;
+            elem.children[1].children[2].innerHTML = "<a href='"+rs.parent[1]+"'>"+rs.parent[0]+"</a>";
+            elem.children[2].innerHTML = "<a href='"+rs.source+"'>Source</a>";
+            elem.children[3].innerHTML = "<a href='"+rs.demo+"'><span>DEMO</span> <img src='./img/dot-arrow.svg'></a>";
+            list.insertBefore(elem,list.firstChild);
+        }
+    })();
+</script>
+</body>
+</html>
