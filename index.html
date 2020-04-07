@@ -157,6 +157,14 @@
             height: 88px;
             border-radius: 4% 50% 20% 50%;
             display: inline-block;
+            transform: rotateY(90deg);
+            transition: transform .4s;
+        }
+        .project-img img.loaded{
+            transform: rotateZ(0deg);
+        }
+        .project-item.back-to-git .project-img img{
+            transform: rotateZ(0deg);
         }
         .project-list .project-item:nth-child(even) .project-img img{
             border-radius: 50% 4% 50% 20%;
@@ -215,6 +223,9 @@
                 '<div class="git-link"></div>\n' +
                 '<div class="demo-link"></div>';
             return item;
+        };
+        function imgLoaded() {
+            this.classList.add("loaded");
         }
         let rows = [
             {
@@ -245,8 +256,11 @@
             elem.children[1].children[2].innerHTML = "<a href='"+rs.parent[1]+"'>"+rs.parent[0]+"</a>";
             elem.children[2].innerHTML = "<a href='"+rs.source+"'>Source</a>";
             if(rs.demo !== null)elem.children[3].innerHTML = "<a href='"+rs.demo+"'><span>DEMO</span> <img src='./img/dot-arrow.svg'></a>";
+            let img = elem.children[0].querySelector("img");
+            img.addEventListener('load', imgLoaded);
             list.insertBefore(elem,list.firstChild);
         }
+
     })();
 </script>
 </body>
