@@ -224,8 +224,34 @@
                 '<div class="demo-link"></div>';
             return item;
         };
+        let loadqueue = (function () {
+            let queue = [];
+            let loading = false;
+            let markAsLoaded = function (elem) {
+                queue.push(elem);
+                if (!loading){
+                    loading = true;
+                    processQueue();
+                }
+            };
+
+            let processQueue = function () {
+                if(queue.length>0){
+                    let elem = queue.shift();
+                    elem.classList.add("loaded");
+                    setTimeout(function () {
+                        processQueue();
+                    },200);
+                } else {
+                    loading = false;
+                }
+            }
+            return {
+                markAsLoaded:markAsLoaded
+            }
+        })();
         function imgLoaded() {
-            this.classList.add("loaded");
+            loadqueue.markAsLoaded(this);
         }
         let rows = [
             {
