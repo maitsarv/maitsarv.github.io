@@ -127,6 +127,16 @@
         .project-item.back-to-git .demo-link{
             width: 180px;
         }
+        .project-list .project-item:not(:first-child) .project-img:before{
+            border-top: 1px solid #ffffff;
+            content: " ";
+            width: 100%;
+            position: absolute;
+            top: -1px;
+            left: 0;
+            right: 0;
+            height: 1px;
+        }
         .project-img{
             margin-right: 12px;
             min-height: 114px;
@@ -135,6 +145,7 @@
             border-bottom: 1px solid #ffffff;
             border-bottom-left-radius: 4px;
             border-bottom-right-radius: 4px;
+            position: relative;
         }
         .project-list .project-item:nth-last-child(2) .project-img,
         .project-list .project-item.back-to-git .project-img{
@@ -147,7 +158,7 @@
             border-radius: 4% 50% 20% 50%;
             display: inline-block;
         }
-        .project-list .project-item:nth-child(even) .project-img>img{
+        .project-list .project-item:nth-child(even) .project-img img{
             border-radius: 50% 4% 50% 20%;
         }
         @media(min-width: 600px) {
@@ -213,6 +224,14 @@
                 parent: ["Plotly Time Series","https://github.com/maitsarv/plotly-time-series"],
                 source: "https://github.com/maitsarv/plotly-time-series/tree/master/demo/lit",
                 demo: "https://maitsarv.github.io/plotly-ts-litelement/"
+            },
+            {
+                img: "./img/rust_barcode.png",
+                title: "Rust barcode reader",
+                desc: "Barcode detector and reader implemented in Rust language.",
+                parent: ["Rust Barcode Reader","https://github.com/maitsarv/rust_barcode_reader"],
+                source: "https://github.com/maitsarv/rust_barcode_reader",
+                demo: null
             }
         ];
         let list = document.getElementById("project-list");
@@ -225,7 +244,7 @@
             elem.children[1].children[1].innerHTML = rs.desc;
             elem.children[1].children[2].innerHTML = "<a href='"+rs.parent[1]+"'>"+rs.parent[0]+"</a>";
             elem.children[2].innerHTML = "<a href='"+rs.source+"'>Source</a>";
-            elem.children[3].innerHTML = "<a href='"+rs.demo+"'><span>DEMO</span> <img src='./img/dot-arrow.svg'></a>";
+            if(rs.demo !== null)elem.children[3].innerHTML = "<a href='"+rs.demo+"'><span>DEMO</span> <img src='./img/dot-arrow.svg'></a>";
             list.insertBefore(elem,list.firstChild);
         }
     })();
