@@ -239,7 +239,7 @@
             let elem = getItemRowTemplate();
             let rs = rows[r];
             elem.children[0].firstChild.firstChild.src = rs.img;
-            elem.children[0].firstChild.setAttribute("href",rs.demo);
+            elem.children[0].firstChild.setAttribute("href",(rs.demo!== null?rs.demo:rs.parent[1]));
             elem.children[1].children[0].innerText = rs.title;
             elem.children[1].children[1].innerHTML = rs.desc;
             elem.children[1].children[2].innerHTML = "<a href='"+rs.parent[1]+"'>"+rs.parent[0]+"</a>";
