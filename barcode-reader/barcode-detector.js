@@ -70,6 +70,9 @@
 /******/ 					"__wbg_getElementById_633c94a971ae0eb9": function(p0i32,p1i32,p2i32) {
 /******/ 						return installedModules[1].exports["__wbg_getElementById_633c94a971ae0eb9"](p0i32,p1i32,p2i32);
 /******/ 					},
+/******/ 					"__wbg_innerHTML_ebf37095d2177081": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules[1].exports["__wbg_innerHTML_ebf37095d2177081"](p0i32,p1i32,p2i32);
+/******/ 					},
 /******/ 					"__wbg_instanceof_CanvasRenderingContext2d_06ca182218e69b94": function(p0i32) {
 /******/ 						return installedModules[1].exports["__wbg_instanceof_CanvasRenderingContext2d_06ca182218e69b94"](p0i32);
 /******/ 					},
@@ -355,7 +358,8 @@ let start_cam_worker = function (wasm) {
 
     const constraints = {
         video: {
-            width: 1680, height: 920
+            width: { min: 1280, ideal: 1720, max: 1920 },
+            height: { min: 720, ideal: 980, max: 1080 }
         }
     };
 
