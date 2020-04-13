@@ -42,6 +42,7 @@
         }
         .project-item{
             display: flex;
+            flex-wrap: wrap;
             border-top: 1px solid #1c8e7d;
             border-top-left-radius: 4px;
             margin: 4px 0;
@@ -172,6 +173,11 @@
         @media(min-width: 600px) {
             div.container{
                 max-width: 94%;
+            }
+        }
+        @media (max-width: 720px) {
+            .project-item{
+                height: auto;
             }
         }
 
