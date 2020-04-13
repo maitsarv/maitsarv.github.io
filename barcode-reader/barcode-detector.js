@@ -365,31 +365,78 @@ let start_cam_worker = function (wasm) {
 
     var captureImage = function(){
         let ct = 0;
-
+        if (drawInterval !== null) return;
         drawInterval = setInterval(function () {
-            context.drawImage(video, 100, 50, canvas.width, canvas.height);
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
             wasmCanvas.find_bar_code();
             ct ++;
             if(ct > 30) stopCamera();
-        },200);
+        },160);
     };
 
     var stopCamera = function(){
         video.srcObject.getVideoTracks().forEach(track => track.stop());
         clearInterval(drawInterval);
+        drawInterval = null;
+    };
+
+    var startCamera = async function(){
+        video.srcObject.getVideoTracks().forEach(track => track.stop());
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        video.srcObject = stream;
+        if(drawInterval !== null)clearInterval(drawInterval);
+        drawInterval = null;
+    };
+
+    video.addEventListener("playing",function () {
+        positionVideo();
+        captureImage();
+    });
+
+    var positionVideo = function () {
+        let ww = window.innerWidth;
+        let wh = window.innerHeight;
+        let left = 0;
+        if (video.videoWidth > ww){
+            left = (video.videoWidth-ww) / 2;
+            console.log(video.videoWidth,video.videoHeight,ww,wh);
+        } else {
+            ww = video.videoWidth;
+        }
+        video.style.left = -left+"px";
+        video.parentElement.style.width = ww+"px";
+        video.parentElement.style.height = video.videoHeight+"px";
+    };
+
+    window.addEventListener("resize",function () {
+        positionVideo();
+    });
+
+    var createButtons = function(){
+        let bnsCont = document.createElement("div");
+        bnsCont.classList.add("control-buttons");
+        let stopbutton = document.createElement("button");
+        stopbutton.addEventListener("click",function () {
+            stopCamera();
+        });
+        stopbutton.innerText = "STOP";
+        bnsCont.appendChild(stopbutton);
+
+        let startbutton = document.createElement("button");
+        startbutton.addEventListener("click",function () {
+            startCamera();
+        });
+        startbutton.innerText = "START";
+        bnsCont.appendChild(startbutton);
+
+        document.getElementById("main-video").appendChild(bnsCont);
     };
 
     async function init_draw() {
         try {
             const stream = await navigator.mediaDevices.getUserMedia(constraints);
             video.srcObject = stream;
-            captureImage();
-            let button = document.createElement("button");
-            button.addEventListener("click",function () {
-                stopCamera();
-            });
-            button.innerText = "STOP";
-            document.body.appendChild(button);
+            createButtons();
         } catch (e) {
             console.log(e.toString());
         }

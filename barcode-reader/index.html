@@ -4,11 +4,45 @@
     <link rel="icon" href="data:;base64,iVBORwOKGO=" /> <!--Makes the favicon nothing to prevent a consol error-->
 </head>
 <body style="margin: 0; background-color: azure; overflow: hidden;">
-<video autoplay style="display: none"></video>
-<canvas id="canvas" width=1280 height=720></canvas>
+<div id="main-video">
+<div class="video-container">
+    <video autoplay style="position: absolute"></video>
+</div>
+</div>
+<canvas id="canvas" width=1680 height=720 style="display: none"></canvas>
 <script src="barcode-detector.js" type="module"></script>
 <div style="width: 100%; padding: 12px">
     <span id="barcode-row"></span>
 </div>
+<style type="text/css">
+    #main-video{
+        display: inline-block;
+        position: relative;
+    }
+    div.video-container{
+        overflow-x: hidden;
+    }
+    div.control-buttons{
+        display: block;
+        position: absolute;
+        bottom: -40px;
+        right: 0;
+    }
+    div.control-buttons button{
+        background-color: transparent;
+        border: 2px #080808 solid;
+        border-radius: 0;
+        color: #080808;
+        padding: 8px 4px;
+        margin-left: 8px;
+        min-width: 62px;
+        font-weight: 500;
+    }
+    div.control-buttons button:hover{
+        background-color: #080808;
+        color: #ffffff;
+        font-weight: 600;
+    }
+</style>
 </body>
 </html>
