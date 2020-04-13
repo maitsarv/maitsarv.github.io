@@ -370,7 +370,7 @@ let start_cam_worker = function (wasm) {
             context.drawImage(video, 100, 50, canvas.width, canvas.height);
             wasmCanvas.find_bar_code();
             ct ++;
-            if(ct > 20) stopCamera();
+            if(ct > 30) stopCamera();
         },200);
     };
 
