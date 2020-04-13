@@ -170,14 +170,42 @@
         .project-list .project-item:nth-child(even) .project-img img{
             border-radius: 50% 4% 50% 20%;
         }
+
+
+        .project-item.back-to-git .git-link{
+            display: none;
+        }
+        .project-item.back-to-git .demo-link{
+            margin-left: auto;
+        }
+        .project-item.back-to-git .git-link{
+            display: none;
+        }
+        .project-item.back-to-git .project-desc{
+            display: none;
+        }
+
         @media(min-width: 600px) {
             div.container{
                 max-width: 94%;
             }
         }
-        @media (max-width: 720px) {
+        @media (max-width: 780px) {
             .project-item{
                 height: auto;
+            }
+            .project-desc{
+                min-width: 50%;
+                max-width: 200px;
+            }
+            .project-item .git-link{
+                width: 60%;
+            }
+            .project-item .demo-link:before{
+                width: 40%;
+            }
+            .project-list .project-item:not(:first-child) .project-img:before {
+                border-top: none;
             }
         }
 
