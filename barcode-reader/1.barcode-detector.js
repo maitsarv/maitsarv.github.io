@@ -28,6 +28,7 @@ __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(global) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Canvas", function() { return Canvas; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__wbindgen_object_drop_ref", function() { return __wbindgen_object_drop_ref; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__wbg_log_5dc0ce5e8a418e4a", function() { return __wbg_log_5dc0ce5e8a418e4a; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__wbg_captureVideoElementFrame_5881a956b2240b74", function() { return __wbg_captureVideoElementFrame_5881a956b2240b74; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__wbg_instanceof_Window_a633dbe0900c728a", function() { return __wbg_instanceof_Window_a633dbe0900c728a; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__wbg_document_07444f1bbea314bb", function() { return __wbg_document_07444f1bbea314bb; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__wbg_getElementById_633c94a971ae0eb9", function() { return __wbg_getElementById_633c94a971ae0eb9; });
@@ -229,6 +230,8 @@ function getStringFromWasm0(ptr, len) {
     return cachedTextDecoder.decode(getUint8Memory0().subarray(ptr, ptr + len));
 }
 
+function notDefined(what) { return () => { throw new Error(`${what} is not defined`); }; }
+
 function isLikeNone(x) {
     return x === undefined || x === null;
 }
@@ -283,6 +286,8 @@ const __wbindgen_object_drop_ref = function(arg0) {
 const __wbg_log_5dc0ce5e8a418e4a = function(arg0, arg1) {
     console.log(getStringFromWasm0(arg0, arg1));
 };
+
+const __wbg_captureVideoElementFrame_5881a956b2240b74 = typeof document.captureVideoElementFrame == 'function' ? document.captureVideoElementFrame : notDefined('document.captureVideoElementFrame');
 
 const __wbg_instanceof_Window_a633dbe0900c728a = function(arg0) {
     var ret = getObject(arg0) instanceof Window;

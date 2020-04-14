@@ -61,6 +61,9 @@
 /******/ 					"__wbg_log_5dc0ce5e8a418e4a": function(p0i32,p1i32) {
 /******/ 						return installedModules[1].exports["__wbg_log_5dc0ce5e8a418e4a"](p0i32,p1i32);
 /******/ 					},
+/******/ 					"__wbg_captureVideoElementFrame_5881a956b2240b74": function() {
+/******/ 						return installedModules[0].exports["captureVideoElementFrame"]();
+/******/ 					},
 /******/ 					"__wbg_instanceof_Window_a633dbe0900c728a": function(p0i32) {
 /******/ 						return installedModules[1].exports["__wbg_instanceof_Window_a633dbe0900c728a"](p0i32);
 /******/ 					},
@@ -339,22 +342,31 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "captureVideoElementFrame", function() { return captureVideoElementFrame; });
 const rust_loader = __webpack_require__.e(/* import() */ 1).then(__webpack_require__.bind(null, 1));
 
 
 rust_loader.then(function (data) {
-    start_cam_worker(data);
+    start_cam_worker.init(data);
 }).catch((e) => console.log(e));
 
+var captureTime = new Date();
+var captureVideoElementFrame = function(){
+    let te = document.getElementById("barcode-time");
+    te.innerText = new  Date() - captureTime + " ms";
+    captureTime = new Date();
+    start_cam_worker.captureImage();
+};
 
-let start_cam_worker = function (wasm) {
+let start_cam_worker = (function () {
     let video = document.querySelector("video");
     const canvas = document.getElementById('canvas');
     const context = canvas.getContext('2d');
-    let drawInterval = null;
-    let wasmCanvas = new wasm.Canvas(canvas.id);
+    let wasmCanvas = null;
 
     const constraints = {
         video: {
@@ -363,43 +375,52 @@ let start_cam_worker = function (wasm) {
         }
     };
 
-    var captureImage = function(){
-        let ct = 0;
+    let capturedImages = 0;
+    let drawInterval = null;
+
+    var startImageCapture = function(){
+        capturedImages = 0;
         if (drawInterval !== null) return;
-        drawInterval = setInterval(function () {
+        drawInterval = true;
+        captureImage();
+    };
+
+    var captureImage = function () {
+        if(capturedImages > 30) {
+            stopCamera();
+            return;
+        }
+        setTimeout(function () {
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
             wasmCanvas.find_bar_code();
-            ct ++;
-            if(ct > 30) stopCamera();
-        },160);
+            capturedImages ++;
+        },100)
+
     };
 
     var stopCamera = function(){
         video.srcObject.getVideoTracks().forEach(track => track.stop());
-        clearInterval(drawInterval);
-        drawInterval = null;
+        capturedImages = null;
     };
 
     var startCamera = async function(){
         video.srcObject.getVideoTracks().forEach(track => track.stop());
+        document.getElementById("barcode-row").innerText = " --- ";
         const stream = await navigator.mediaDevices.getUserMedia(constraints);
         video.srcObject = stream;
-        if(drawInterval !== null)clearInterval(drawInterval);
         drawInterval = null;
     };
 
     video.addEventListener("playing",function () {
         positionVideo();
-        captureImage();
+        startImageCapture();
     });
 
     var positionVideo = function () {
         let ww = window.innerWidth;
-        let wh = window.innerHeight;
         let left = 0;
         if (video.videoWidth > ww){
             left = (video.videoWidth-ww) / 2;
-            console.log(video.videoWidth,video.videoHeight,ww,wh);
         } else {
             ww = video.videoWidth;
         }
@@ -429,10 +450,20 @@ let start_cam_worker = function (wasm) {
         startbutton.innerText = "START";
         bnsCont.appendChild(startbutton);
 
+        let downImage = document.createElement("button");
+        downImage.addEventListener("click",function () {
+            var img    = canvas.toDataURL("image/jpeg");
+            document.write('<img src="'+img+'"/>');
+        });
+        downImage.innerText = "DOWNLOAD";
+        bnsCont.appendChild(downImage);
+
+
         document.getElementById("main-video").appendChild(bnsCont);
     };
 
-    async function init_draw() {
+    async function init_draw(wasm) {
+        wasmCanvas = new wasm.Canvas(canvas.id);
         try {
             const stream = await navigator.mediaDevices.getUserMedia(constraints);
             video.srcObject = stream;
@@ -442,8 +473,11 @@ let start_cam_worker = function (wasm) {
         }
     }
 
-    init_draw();
-};
+    return {
+        init: init_draw,
+        captureImage:captureImage
+    }
+})();
 
 /***/ })
 /******/ ]);
