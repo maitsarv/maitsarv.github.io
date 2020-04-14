@@ -29,6 +29,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__wbindgen_object_drop_ref", function() { return __wbindgen_object_drop_ref; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__wbg_log_5dc0ce5e8a418e4a", function() { return __wbg_log_5dc0ce5e8a418e4a; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__wbg_captureVideoElementFrame_5881a956b2240b74", function() { return __wbg_captureVideoElementFrame_5881a956b2240b74; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__wbg_logPixelValue_ad3b504e0ffb3da8", function() { return __wbg_logPixelValue_ad3b504e0ffb3da8; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__wbg_logBarCodePositions_d732853d2aeef8cf", function() { return __wbg_logBarCodePositions_d732853d2aeef8cf; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__wbg_instanceof_Window_a633dbe0900c728a", function() { return __wbg_instanceof_Window_a633dbe0900c728a; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__wbg_document_07444f1bbea314bb", function() { return __wbg_document_07444f1bbea314bb; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__wbg_getElementById_633c94a971ae0eb9", function() { return __wbg_getElementById_633c94a971ae0eb9; });
@@ -232,6 +234,22 @@ function getStringFromWasm0(ptr, len) {
 
 function notDefined(what) { return () => { throw new Error(`${what} is not defined`); }; }
 
+function getArrayU8FromWasm0(ptr, len) {
+    return getUint8Memory0().subarray(ptr / 1, ptr / 1 + len);
+}
+
+let cachegetUint32Memory0 = null;
+function getUint32Memory0() {
+    if (cachegetUint32Memory0 === null || cachegetUint32Memory0.buffer !== _barcode_bg_wasm__WEBPACK_IMPORTED_MODULE_0__[/* memory */ "g"].buffer) {
+        cachegetUint32Memory0 = new Uint32Array(_barcode_bg_wasm__WEBPACK_IMPORTED_MODULE_0__[/* memory */ "g"].buffer);
+    }
+    return cachegetUint32Memory0;
+}
+
+function getArrayU32FromWasm0(ptr, len) {
+    return getUint32Memory0().subarray(ptr / 4, ptr / 4 + len);
+}
+
 function isLikeNone(x) {
     return x === undefined || x === null;
 }
@@ -288,6 +306,14 @@ const __wbg_log_5dc0ce5e8a418e4a = function(arg0, arg1) {
 };
 
 const __wbg_captureVideoElementFrame_5881a956b2240b74 = typeof document.captureVideoElementFrame == 'function' ? document.captureVideoElementFrame : notDefined('document.captureVideoElementFrame');
+
+const __wbg_logPixelValue_ad3b504e0ffb3da8 = function(arg0, arg1) {
+    document.logPixelValue(getArrayU8FromWasm0(arg0, arg1));
+};
+
+const __wbg_logBarCodePositions_d732853d2aeef8cf = function(arg0, arg1) {
+    document.logBarCodePositions(getArrayU32FromWasm0(arg0, arg1));
+};
 
 const __wbg_instanceof_Window_a633dbe0900c728a = function(arg0) {
     var ret = getObject(arg0) instanceof Window;

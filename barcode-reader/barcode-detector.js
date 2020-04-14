@@ -62,7 +62,13 @@
 /******/ 						return installedModules[1].exports["__wbg_log_5dc0ce5e8a418e4a"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__wbg_captureVideoElementFrame_5881a956b2240b74": function() {
-/******/ 						return installedModules[0].exports["captureVideoElementFrame"]();
+/******/ 						return installedModules[1].exports["__wbg_captureVideoElementFrame_5881a956b2240b74"]();
+/******/ 					},
+/******/ 					"__wbg_logPixelValue_ad3b504e0ffb3da8": function(p0i32,p1i32) {
+/******/ 						return installedModules[1].exports["__wbg_logPixelValue_ad3b504e0ffb3da8"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__wbg_logBarCodePositions_d732853d2aeef8cf": function(p0i32,p1i32) {
+/******/ 						return installedModules[1].exports["__wbg_logBarCodePositions_d732853d2aeef8cf"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__wbg_instanceof_Window_a633dbe0900c728a": function(p0i32) {
 /******/ 						return installedModules[1].exports["__wbg_instanceof_Window_a633dbe0900c728a"](p0i32);
@@ -342,11 +348,8 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "captureVideoElementFrame", function() { return captureVideoElementFrame; });
 const rust_loader = __webpack_require__.e(/* import() */ 1).then(__webpack_require__.bind(null, 1));
 
 
@@ -354,12 +357,25 @@ rust_loader.then(function (data) {
     start_cam_worker.init(data);
 }).catch((e) => console.log(e));
 
+var pxValues = {0:[]};
+var pxValuect = 0;
+var pxDetected = {};
 var captureTime = new Date();
-var captureVideoElementFrame = function(){
+document.captureVideoElementFrame  = function(){
     let te = document.getElementById("barcode-time");
     te.innerText = new  Date() - captureTime + " ms";
     captureTime = new Date();
     start_cam_worker.captureImage();
+};
+
+
+document.logPixelValue = function(pxs){
+    pxValues[pxValuect] = pxs.slice();
+};
+
+document.logBarCodePositions = function(pxs){
+    if (pxDetected[pxValuect] === undefined) pxDetected[pxValuect] = [];
+    pxDetected[pxValuect].push(pxs);
 };
 
 let start_cam_worker = (function () {
@@ -367,6 +383,12 @@ let start_cam_worker = (function () {
     const canvas = document.getElementById('canvas');
     const context = canvas.getContext('2d');
     let wasmCanvas = null;
+
+    let controlButtons = {
+        debugNav : [],
+        debug : {},
+        stop : {},
+    };
 
     const constraints = {
         video: {
@@ -382,6 +404,8 @@ let start_cam_worker = (function () {
         capturedImages = 0;
         if (drawInterval !== null) return;
         drawInterval = true;
+        pxValues = {0:[]};
+        pxValuect = 0;
         captureImage();
     };
 
@@ -391,12 +415,102 @@ let start_cam_worker = (function () {
             return;
         }
         setTimeout(function () {
+            pxValuect++;
+            pxValues[pxValuect] = [];
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
             wasmCanvas.find_bar_code();
             capturedImages ++;
-        },100)
+        },120)
 
     };
+
+
+    let playbackTimeOut = null;
+
+
+
+
+    var playOutColorChannel = (function(){
+        let ct = 0;
+
+        let navigate = function(forward){
+            if(playbackTimeOut !== null)clearInterval(playbackTimeOut);
+            playbackTimeOut = null;
+            if (forward) {
+                ct ++;
+                if (pxValues[ct] === undefined) {
+                    ct --;
+                }
+            } else {
+                ct --;
+                if (pxValues[ct] === undefined) {
+                    ct ++;
+                }
+            }
+            setDebugPicture();
+        };
+
+        var loopPlayBack = function(){
+            ct = 0;
+            setDebugPicture();
+            playbackTimeOut = setInterval(function () {
+                ct++;
+                setDebugPicture();
+            },1400);
+        };
+
+
+        var setDebugPicture = function () {
+            if (pxValues[ct] === undefined) {
+                if(playbackTimeOut !== null)clearInterval(playbackTimeOut);
+                playbackTimeOut = null;
+            }
+            let detected = pxDetected[ct];
+            if(detected === undefined) detected = {};
+            else console.log(detected);
+            let curImg = pxValues[ct];
+            let newpx = context.createImageData(canvas.width, canvas.height);
+            let ix = 0;
+            let len = curImg.length;
+            for(let c = 0; c<len;c++){
+                newpx.data[ix] = curImg[c];
+                newpx.data[ix+3] = 255;
+                ix+=4;
+            }
+            let row = (canvas.width * 4);
+            let colorPosition = function (pos) {
+                let iter = 16;
+                let start = pos - (iter/2)*row;
+                if (start < 0) {
+                    start = pos;
+                    iter = (iter/2);
+                }
+                let end = pos + (iter/2)*row;
+                if (end > newpx.length) end = newpx.length;
+                for(;start<=end;start += row){
+                    newpx.data[start+1] = 255;
+                    newpx.data[start]   = 0;
+                    newpx.data[start-3] = 255;
+                    newpx.data[start-4] = 0;
+                }
+            };
+            for (let d in detected){
+                let da = detected[d];
+                let dix = da[0] * row;
+                let start = dix + da[2];
+                colorPosition(start);
+                let end =   dix + da[3];
+                colorPosition(end);
+
+            }
+            context.putImageData(newpx,0,0);
+        }
+
+        return {
+            loopPlayBack:loopPlayBack,
+            navigate:navigate
+        }
+    })();
 
     var stopCamera = function(){
         video.srcObject.getVideoTracks().forEach(track => track.stop());
@@ -404,6 +518,8 @@ let start_cam_worker = (function () {
     };
 
     var startCamera = async function(){
+        canvas.style.display = "none";
+        video.style.display = "block";
         video.srcObject.getVideoTracks().forEach(track => track.stop());
         document.getElementById("barcode-row").innerText = " --- ";
         const stream = await navigator.mediaDevices.getUserMedia(constraints);
@@ -433,6 +549,23 @@ let start_cam_worker = (function () {
         positionVideo();
     });
 
+    let setIsDebugMode = function(isDebug){
+        if (isDebug){
+            for (let i=0; i<controlButtons.debugNav.length;i++){
+                controlButtons.debugNav[i].style.display = "inline-block";
+            }
+            controlButtons.debug.style.display = "none";
+            controlButtons.stop.style.display = "none";
+        } else {
+            for (let i=0; i<controlButtons.debugNav.length;i++){
+                controlButtons.debugNav[i].style.display = "none";
+            }
+            controlButtons.stop.style.display = "inline-block";
+            controlButtons.debug.style.display = "inline-block";
+        }
+
+    };
+
     var createButtons = function(){
         let bnsCont = document.createElement("div");
         bnsCont.classList.add("control-buttons");
@@ -442,9 +575,11 @@ let start_cam_worker = (function () {
         });
         stopbutton.innerText = "STOP";
         bnsCont.appendChild(stopbutton);
+        controlButtons.stop = stopbutton;
 
         let startbutton = document.createElement("button");
         startbutton.addEventListener("click",function () {
+            setIsDebugMode(false);
             startCamera();
         });
         startbutton.innerText = "START";
@@ -452,12 +587,40 @@ let start_cam_worker = (function () {
 
         let downImage = document.createElement("button");
         downImage.addEventListener("click",function () {
-            var img    = canvas.toDataURL("image/jpeg");
+            var img = canvas.toDataURL("image/jpeg");
             document.write('<img src="'+img+'"/>');
         });
         downImage.innerText = "DOWNLOAD";
         bnsCont.appendChild(downImage);
 
+        let replayImage = document.createElement("button");
+        replayImage.addEventListener("click",function () {
+            canvas.style.display = "block";
+            video.style.display = "none";
+            capturedImages = 999;
+            playOutColorChannel.loopPlayBack();
+            setIsDebugMode(true);
+        });
+        replayImage.innerText = "DEBUG";
+        controlButtons.debug = replayImage;
+        bnsCont.appendChild(replayImage);
+
+        let nav = document.createElement("button");
+        nav.addEventListener("click",function () {
+            playOutColorChannel.navigate(false);
+        });
+        nav.innerText = "<";
+        nav.style.display = "none";
+        bnsCont.appendChild(nav);
+        controlButtons.debugNav.push(nav);
+        nav = document.createElement("button");
+        nav.addEventListener("click",function () {
+            playOutColorChannel.navigate(true);
+        });
+        nav.innerText = ">";
+        nav.style.display = "none";
+        bnsCont.appendChild(nav);
+        controlButtons.debugNav.push(nav);
 
         document.getElementById("main-video").appendChild(bnsCont);
     };
@@ -478,6 +641,7 @@ let start_cam_worker = (function () {
         captureImage:captureImage
     }
 })();
+
 
 /***/ })
 /******/ ]);

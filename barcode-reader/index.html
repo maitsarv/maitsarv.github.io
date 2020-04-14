@@ -3,16 +3,17 @@
 <head>
     <link rel="icon" href="data:;base64,iVBORwOKGO=" /> <!--Makes the favicon nothing to prevent a consol error-->
 </head>
-<body style="margin: 0; background-color: azure; overflow: hidden;">
+<body style="margin: 0; background-color: azure; overflow-x: hidden;">
 <div id="main-video">
 <div class="video-container">
     <video autoplay style="position: absolute"></video>
+    <canvas id="canvas" width="1280" height="720" style="display: block"></canvas>
 </div>
 </div>
 <div style="width: 100%; padding: 12px">
     <span id="barcode-row"> --- </span>    <span id="barcode-img-w"> --- </span> <span id="barcode-time"> --- </span>
 </div>
-<canvas id="canvas" width="1280" height="720" style="display: none"></canvas>
+
 <script src="barcode-detector.js" type="module"></script>
 
 <style type="text/css">
@@ -24,26 +25,31 @@
         overflow-x: hidden;
     }
     div.control-buttons{
-        display: block;
         position: absolute;
-        bottom: -40px;
+        bottom: 0;
         right: 0;
+        display: none;
+    }
+    #main-video:hover div.control-buttons{
+        display: block;
     }
     div.control-buttons button{
-        background-color: transparent;
-        border: 2px #080808 solid;
+        background-color: rgba(255,255,255,0.4);
+        border: 2px rgba(255,255,255,0.8) solid;
         border-radius: 0;
         color: #080808;
         padding: 8px 4px;
-        margin-left: 8px;
-        min-width: 72px;
+        margin-left: 16px;
+        min-width: 144px;
         font-weight: 500;
-        font-size: 16px;
+        font-size: 22px;
+
     }
     div.control-buttons button:hover{
         background-color: #080808;
         color: #ffffff;
         font-weight: 600;
+        border-color: #080808;
     }
     #barcode-row{
         font-size: 16px;
