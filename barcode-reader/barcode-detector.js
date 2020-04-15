@@ -360,6 +360,7 @@ rust_loader.then(function (data) {
 var pxValues = {0:[]};
 var pxValuect = 0;
 var pxDetected = {};
+document.pxDetected = pxDetected;
 var captureTime = new Date();
 document.captureVideoElementFrame  = function(){
     let te = document.getElementById("barcode-time");
@@ -374,8 +375,9 @@ document.logPixelValue = function(pxs){
 };
 
 document.logBarCodePositions = function(pxs){
+    console.log("px",pxValuect);
     if (pxDetected[pxValuect] === undefined) pxDetected[pxValuect] = [];
-    pxDetected[pxValuect].push(pxs);
+    pxDetected[pxValuect].push([pxs[0],pxs[1],pxs[2],pxs[3]]);
 };
 
 let start_cam_worker = (function () {
@@ -487,6 +489,7 @@ let start_cam_worker = (function () {
                 }
                 let end = pos + (iter/2)*row;
                 if (end > newpx.length) end = newpx.length;
+                console.log(Math.round(start/row),(start%row)/4);
                 for(;start<=end;start += row){
                     newpx.data[start+1] = 255;
                     newpx.data[start]   = 0;
@@ -497,9 +500,10 @@ let start_cam_worker = (function () {
             for (let d in detected){
                 let da = detected[d];
                 let dix = da[0] * row;
-                let start = dix + da[2];
+                let start = dix + (da[2]*4);
+                console.log(da,start,da[0],da[2]);
                 colorPosition(start);
-                let end =   dix + da[3];
+                let end =   dix + (da[3]*4);
                 colorPosition(end);
 
             }
