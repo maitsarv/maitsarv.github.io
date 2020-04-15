@@ -375,7 +375,6 @@ document.logPixelValue = function(pxs){
 };
 
 document.logBarCodePositions = function(pxs){
-    console.log("px",pxValuect);
     if (pxDetected[pxValuect] === undefined) pxDetected[pxValuect] = [];
     pxDetected[pxValuect].push([pxs[0],pxs[1],pxs[2],pxs[3]]);
 };
@@ -501,14 +500,14 @@ let start_cam_worker = (function () {
                 let da = detected[d];
                 let dix = da[0] * row;
                 let start = dix + (da[2]*4);
-                console.log(da,start,da[0],da[2]);
+                console.log(da,start,da[0],da[2],len);
                 colorPosition(start);
                 let end =   dix + (da[3]*4);
                 colorPosition(end);
 
             }
             context.putImageData(newpx,0,0);
-        }
+        };
 
         return {
             loopPlayBack:loopPlayBack,
