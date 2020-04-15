@@ -407,6 +407,7 @@ let start_cam_worker = (function () {
         drawInterval = true;
         pxValues = {0:[]};
         pxValuect = 0;
+        pxDetected = {};
         captureImage();
     };
 
