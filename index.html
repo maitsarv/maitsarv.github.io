@@ -291,6 +291,14 @@
         }
         let rows = [
             {
+                img: "./img/deskis.png",
+                title: "Simple CSV sum calculator",
+                desc: "Sums CSV rows and columns",
+                parent: null,
+                source: "https://github.com/maitsarv/csvSum",
+                demo: "deskis/index.html"
+            },
+            {
                 img: "./img/plotly-ts-lit.png",
                 title: "Plotly Time Series with lit-element",
                 desc: "Demo of Plotly Time Series library implemented using lit-element.",
@@ -315,7 +323,7 @@
             elem.children[0].firstChild.setAttribute("href",(rs.demo!== null?rs.demo:rs.parent[1]));
             elem.children[1].children[0].innerText = rs.title;
             elem.children[1].children[1].innerHTML = rs.desc;
-            elem.children[1].children[2].innerHTML = "<a href='"+rs.parent[1]+"'>"+rs.parent[0]+"</a>";
+            if(rs.parent !== null) elem.children[1].children[2].innerHTML = "<a href='"+rs.parent[1]+"'>"+rs.parent[0]+"</a>";
             elem.children[2].innerHTML = "<a href='"+rs.source+"'>Source</a>";
             if(rs.demo !== null)elem.children[3].innerHTML = "<a href='"+rs.demo+"'><span>DEMO</span> <img src='./img/dot-arrow.svg'></a>";
             let img = elem.children[0].querySelector("img");
