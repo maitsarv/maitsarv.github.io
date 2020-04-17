@@ -45,7 +45,7 @@ var DeskisCalc = /** @class */ (function () {
         var _loop_1 = function (i) {
             var file = files[i];
             var type = file.type;
-            if (type.indexOf("csv") < 0 && type !== "") {
+            if (type.indexOf("csv") < 0 && type.indexOf("text/") < 0 && type !== "") {
                 setTimeout(function () {
                     callback(["ignore", file, null], [2, "incorrect file format: " + type]);
                 }, 2);
