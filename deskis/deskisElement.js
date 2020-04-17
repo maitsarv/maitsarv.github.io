@@ -2,7 +2,7 @@ var DeskisCalc = /** @class */ (function () {
     function DeskisCalc() {
         this.errors = {
             'parse': {},
-            'calc': {},
+            'calc': {}
         };
         this.fileQueue = [];
         this.processedFiles = [];
