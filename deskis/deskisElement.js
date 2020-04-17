@@ -42,12 +42,20 @@ var DeskisCalc = /** @class */ (function () {
         };
         this.filesProcessedCallback = callback;
         this.processedFiles = [];
-        for (var i = 0; i < files.length; i++) {
+        var _loop_1 = function (i) {
             var file = files[i];
             var type = file.type;
-            if (type !== "text/csv")
-                continue;
-            this.fileQueue.push(file);
+            if (type.indexOf("csv") >= 0) {
+                setTimeout(function () {
+                    callback(["ignore", file, null], [2, "incorrect file format: "]);
+                }, 2);
+                return "continue";
+            }
+            this_1.fileQueue.push(file);
+        };
+        var this_1 = this;
+        for (var i = 0; i < files.length; i++) {
+            _loop_1(i);
         }
         this.processFile();
     };
