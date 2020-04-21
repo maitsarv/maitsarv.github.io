@@ -394,7 +394,8 @@ let start_cam_worker = (function () {
     const constraints = {
         video: {
             width: { min: 1280, ideal: 1720, max: 1920 },
-            height: { min: 720, ideal: 980, max: 1080 }
+            height: { min: 720, ideal: 980, max: 1080 },
+            facingMode: "environment"
         }
     };
 
