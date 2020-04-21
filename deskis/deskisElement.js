@@ -212,7 +212,7 @@ var DeskisElement = /** @class */ (function () {
             }
             else {
                 if (errors[0] > 0) {
-                    statusClass = "file-warning";
+                    statusClass = "file-error";
                     statusN = "!";
                     statusText = errors[1];
                 }
