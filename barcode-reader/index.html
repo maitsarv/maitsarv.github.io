@@ -9,9 +9,10 @@
     <video autoplay style="position: absolute"></video>
     <canvas id="canvas" width="1280" height="720" style="display: block"></canvas>
 </div>
+    <span id="barcode-row"> --- </span>
 </div>
 <div style="width: 100%; padding: 12px">
-    <span id="barcode-row"> --- </span>    <span id="barcode-img-w"> --- </span> <span id="barcode-time"> --- </span>
+    <span id="barcode-img-w"> --- </span> <span id="barcode-time"> --- </span>
 </div>
 
 <script src="barcode-detector.js" type="module"></script>
@@ -52,8 +53,17 @@
         border-color: #080808;
     }
     #barcode-row{
+        position: absolute;
+        display: inline-block;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 28px;
+        background-color: rgba(255,255,255,.6);
+        text-align: center;
         font-size: 16px;
         font-size: 1.2rem;
+        z-index: 24;
 
     }
 </style>
