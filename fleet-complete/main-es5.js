@@ -347,7 +347,10 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         value: function loadAppConfig() {
           var _this = this;
 
-          return this.http.get('/assets/config.json').toPromise().then(function (data) {
+          var href = '';
+          var base = document.querySelector("base");
+          if (base !== null) href = base.href;
+          return this.http.get(href + 'assets/config.json').toPromise().then(function (data) {
             _this.appConfig = data;
           });
         } // This is an example property ... you can make it however you want.

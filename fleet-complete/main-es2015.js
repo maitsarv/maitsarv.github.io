@@ -105,7 +105,11 @@ class AppConfigService {
         this.http = http;
     }
     loadAppConfig() {
-        return this.http.get('/assets/config.json')
+        let href = '';
+        let base = document.querySelector("base");
+        if (base !== null)
+            href = base.href;
+        return this.http.get(href + 'assets/config.json')
             .toPromise()
             .then(data => {
             this.appConfig = data;
@@ -682,7 +686,7 @@ AppModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjector
             _angular_material_core__WEBPACK_IMPORTED_MODULE_5__["MatNativeDateModule"],
             _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_6__["BrowserAnimationsModule"],
             _maps_maps_module__WEBPACK_IMPORTED_MODULE_8__["MapsModule"],
-            _angular_forms__WEBPACK_IMPORTED_MODULE_9__["ReactiveFormsModule"]
+            _angular_forms__WEBPACK_IMPORTED_MODULE_9__["ReactiveFormsModule"],
         ]] });
 (function () { (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵsetNgModuleScope"](AppModule, { declarations: [_app_component__WEBPACK_IMPORTED_MODULE_3__["AppComponent"],
         _components_date_picker_past_date_picker_past_component__WEBPACK_IMPORTED_MODULE_7__["DatePickerPastComponent"],
@@ -710,7 +714,7 @@ AppModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjector
                     _angular_material_core__WEBPACK_IMPORTED_MODULE_5__["MatNativeDateModule"],
                     _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_6__["BrowserAnimationsModule"],
                     _maps_maps_module__WEBPACK_IMPORTED_MODULE_8__["MapsModule"],
-                    _angular_forms__WEBPACK_IMPORTED_MODULE_9__["ReactiveFormsModule"]
+                    _angular_forms__WEBPACK_IMPORTED_MODULE_9__["ReactiveFormsModule"],
                 ],
                 providers: [
                     {
