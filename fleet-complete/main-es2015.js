@@ -361,7 +361,6 @@ class AppComponent {
                 if (this.vehicleList.get(item.objectId)) {
                     this.vehicleList.set(item.objectId, item);
                 }
-                console.log("update");
             }
             this.mapDataService.positionVehicles(this.vehicleList);
         }, (error) => {
@@ -434,13 +433,23 @@ class AppComponent {
                     let previousDistance = -1;
                     let previousStopDistance = -1;
                     let num = 0;
+                    let totalT = 0;
                     for (const item of response) {
-                        if (item.Distance === undefined || item.timestamp === undefined)
+                        if (item.timestamp === undefined)
                             continue;
-                        if (previousDistance === item.Distance) {
-                            continue;
-                        }
                         item.timestampDate = new Date(item.timestamp);
+                        if (item.Distance === undefined) {
+                            if (item.DeltaDistance === undefined || item.DeltaDistance === null) {
+                                continue;
+                            }
+                            totalT += item.DeltaDistance;
+                            item.Distance = totalT;
+                        }
+                        else {
+                            if (previousDistance === item.Distance) {
+                                continue;
+                            }
+                        }
                         // if time difference between movements is over x minutes
                         if (item.timestampDate.valueOf() - previousTime.valueOf() > this.stopTimeThreshold && item.Distance - previousStopDistance > this.stopAllowedDistance) {
                             stops.push(num);
@@ -1367,12 +1376,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var ol__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ol */ "./node_modules/ol/index.js");
 /* harmony import */ var ol_layer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ol/layer */ "./node_modules/ol/layer.js");
 /* harmony import */ var ol_source_Vector__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ol/source/Vector */ "./node_modules/ol/source/Vector.js");
-/* harmony import */ var ol_geom__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ol/geom */ "./node_modules/ol/geom.js");
-/* harmony import */ var ol_proj__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ol/proj */ "./node_modules/ol/proj.js");
-/* harmony import */ var ol_control__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ol/control */ "./node_modules/ol/control.js");
-/* harmony import */ var ol_source_OSM__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ol/source/OSM */ "./node_modules/ol/source/OSM.js");
-/* harmony import */ var ol_interaction__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ol/interaction */ "./node_modules/ol/interaction.js");
-
+/* harmony import */ var ol_control__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ol/control */ "./node_modules/ol/control.js");
+/* harmony import */ var ol_source_OSM__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ol/source/OSM */ "./node_modules/ol/source/OSM.js");
+/* harmony import */ var ol_interaction__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ol/interaction */ "./node_modules/ol/interaction.js");
+/* harmony import */ var _map_data_service__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../map-data.service */ "./src/app/map-data.service.ts");
 
 
 
@@ -1383,27 +1390,53 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class OpenStreetMapComponent {
-    constructor() {
+    constructor(mapData) {
+        this.mapData = mapData;
+        this.subscription = {
+            addVehicles: null,
+            clearVehicles: null,
+            activateVehicle: null,
+            addVehicleTrack: null,
+            clearVehicleTrack: null,
+            markerChanges: null,
+        };
+        this.center = {
+            lat: 58.370568,
+            lng: 26.715893,
+        };
+        this.subscription.addVehicles = mapData.vehiclesPositioned$.subscribe(vehs => {
+            for (const v of vehs) {
+                this.addMarker(v[1].objectName, v[1].latitude, v[1].longitude);
+            }
+        });
+        this.subscription.clearVehicles = mapData.vehiclesCleared$.subscribe(() => {
+        });
+        this.subscription.addVehicles = mapData.vehicleTrack$.subscribe(tracks => {
+        });
+        this.subscription.clearVehicleTrack = mapData.vehicleTracksCleared$.subscribe(() => {
+        });
+        this.subscription.activateVehicle = mapData.vehiclesActivated$.subscribe((veh) => {
+            this.center = {
+                lat: veh.latitude,
+                lng: veh.longitude,
+            };
+        });
     }
     addMarker(label, lon, lat) {
-        const feature = new ol__WEBPACK_IMPORTED_MODULE_1__["Feature"]({
-            geometry: new ol_geom__WEBPACK_IMPORTED_MODULE_4__["Point"](Object(ol_proj__WEBPACK_IMPORTED_MODULE_5__["fromLonLat"])([lon, lat]))
-        });
-        this.markers.getSource().addFeature(feature);
     }
     ngOnInit() {
         this.map = new ol__WEBPACK_IMPORTED_MODULE_1__["Map"]({
             target: 'os-map',
             layers: [
                 new ol_layer__WEBPACK_IMPORTED_MODULE_2__["Tile"]({
-                    source: new ol_source_OSM__WEBPACK_IMPORTED_MODULE_7__["default"]()
+                    source: new ol_source_OSM__WEBPACK_IMPORTED_MODULE_5__["default"]()
                 })
             ],
             view: new ol__WEBPACK_IMPORTED_MODULE_1__["View"]({
                 center: [0, 0],
                 zoom: 0
             }),
-            controls: Object(ol_control__WEBPACK_IMPORTED_MODULE_6__["defaults"])(),
+            controls: Object(ol_control__WEBPACK_IMPORTED_MODULE_4__["defaults"])(),
         });
         this.markers = new ol_layer__WEBPACK_IMPORTED_MODULE_2__["Vector"]({
             source: new ol_source_Vector__WEBPACK_IMPORTED_MODULE_3__["default"]({
@@ -1413,7 +1446,7 @@ class OpenStreetMapComponent {
         this.map.addLayer(this.markers);
     }
 }
-OpenStreetMapComponent.ɵfac = function OpenStreetMapComponent_Factory(t) { return new (t || OpenStreetMapComponent)(); };
+OpenStreetMapComponent.ɵfac = function OpenStreetMapComponent_Factory(t) { return new (t || OpenStreetMapComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_map_data_service__WEBPACK_IMPORTED_MODULE_7__["MapDataService"])); };
 OpenStreetMapComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: OpenStreetMapComponent, selectors: [["app-open-street-map"]], decls: 2, vars: 0, consts: [["id", "os-map"], ["id", "os-controls"]], template: function OpenStreetMapComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](0, "div", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](1, "div", 1);
@@ -1425,7 +1458,7 @@ OpenStreetMapComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵd
                 templateUrl: './open-street-map.component.html',
                 styleUrls: ['./open-street-map.component.css'],
             }]
-    }], function () { return []; }, null); })();
+    }], function () { return [{ type: _map_data_service__WEBPACK_IMPORTED_MODULE_7__["MapDataService"] }]; }, null); })();
 
 
 /***/ }),

@@ -739,8 +739,6 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
                 if (_this3.vehicleList.get(item.objectId)) {
                   _this3.vehicleList.set(item.objectId, item);
                 }
-
-                console.log("update");
               }
             } catch (err) {
               _iterator.e(err);
@@ -852,6 +850,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
                 var previousDistance = -1;
                 var previousStopDistance = -1;
                 var num = 0;
+                var totalT = 0;
 
                 var _iterator3 = _createForOfIteratorHelper(response),
                     _step3;
@@ -859,13 +858,22 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
                 try {
                   for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
                     var item = _step3.value;
-                    if (item.Distance === undefined || item.timestamp === undefined) continue;
+                    if (item.timestamp === undefined) continue;
+                    item.timestampDate = new Date(item.timestamp);
 
-                    if (previousDistance === item.Distance) {
-                      continue;
-                    }
+                    if (item.Distance === undefined) {
+                      if (item.DeltaDistance === undefined || item.DeltaDistance === null) {
+                        continue;
+                      }
 
-                    item.timestampDate = new Date(item.timestamp); // if time difference between movements is over x minutes
+                      totalT += item.DeltaDistance;
+                      item.Distance = totalT;
+                    } else {
+                      if (previousDistance === item.Distance) {
+                        continue;
+                      }
+                    } // if time difference between movements is over x minutes
+
 
                     if (item.timestampDate.valueOf() - previousTime.valueOf() > _this5.stopTimeThreshold && item.Distance - previousStopDistance > _this5.stopAllowedDistance) {
                       stops.push(num);
@@ -2500,60 +2508,90 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     /* harmony import */
 
 
-    var ol_geom__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(
-    /*! ol/geom */
-    "./node_modules/ol/geom.js");
-    /* harmony import */
-
-
-    var ol_proj__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(
-    /*! ol/proj */
-    "./node_modules/ol/proj.js");
-    /* harmony import */
-
-
-    var ol_control__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(
+    var ol_control__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(
     /*! ol/control */
     "./node_modules/ol/control.js");
     /* harmony import */
 
 
-    var ol_source_OSM__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(
+    var ol_source_OSM__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(
     /*! ol/source/OSM */
     "./node_modules/ol/source/OSM.js");
     /* harmony import */
 
 
-    var ol_interaction__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(
+    var ol_interaction__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(
     /*! ol/interaction */
     "./node_modules/ol/interaction.js");
+    /* harmony import */
+
+
+    var _map_data_service__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(
+    /*! ../../map-data.service */
+    "./src/app/map-data.service.ts");
 
     var OpenStreetMapComponent = /*#__PURE__*/function () {
-      function OpenStreetMapComponent() {
+      function OpenStreetMapComponent(mapData) {
+        var _this8 = this;
+
         _classCallCheck(this, OpenStreetMapComponent);
+
+        this.mapData = mapData;
+        this.subscription = {
+          addVehicles: null,
+          clearVehicles: null,
+          activateVehicle: null,
+          addVehicleTrack: null,
+          clearVehicleTrack: null,
+          markerChanges: null
+        };
+        this.center = {
+          lat: 58.370568,
+          lng: 26.715893
+        };
+        this.subscription.addVehicles = mapData.vehiclesPositioned$.subscribe(function (vehs) {
+          var _iterator10 = _createForOfIteratorHelper(vehs),
+              _step10;
+
+          try {
+            for (_iterator10.s(); !(_step10 = _iterator10.n()).done;) {
+              var v = _step10.value;
+
+              _this8.addMarker(v[1].objectName, v[1].latitude, v[1].longitude);
+            }
+          } catch (err) {
+            _iterator10.e(err);
+          } finally {
+            _iterator10.f();
+          }
+        });
+        this.subscription.clearVehicles = mapData.vehiclesCleared$.subscribe(function () {});
+        this.subscription.addVehicles = mapData.vehicleTrack$.subscribe(function (tracks) {});
+        this.subscription.clearVehicleTrack = mapData.vehicleTracksCleared$.subscribe(function () {});
+        this.subscription.activateVehicle = mapData.vehiclesActivated$.subscribe(function (veh) {
+          _this8.center = {
+            lat: veh.latitude,
+            lng: veh.longitude
+          };
+        });
       }
 
       _createClass(OpenStreetMapComponent, [{
         key: "addMarker",
-        value: function addMarker(label, lon, lat) {
-          var feature = new ol__WEBPACK_IMPORTED_MODULE_1__["Feature"]({
-            geometry: new ol_geom__WEBPACK_IMPORTED_MODULE_4__["Point"](Object(ol_proj__WEBPACK_IMPORTED_MODULE_5__["fromLonLat"])([lon, lat]))
-          });
-          this.markers.getSource().addFeature(feature);
-        }
+        value: function addMarker(label, lon, lat) {}
       }, {
         key: "ngOnInit",
         value: function ngOnInit() {
           this.map = new ol__WEBPACK_IMPORTED_MODULE_1__["Map"]({
             target: 'os-map',
             layers: [new ol_layer__WEBPACK_IMPORTED_MODULE_2__["Tile"]({
-              source: new ol_source_OSM__WEBPACK_IMPORTED_MODULE_7__["default"]()
+              source: new ol_source_OSM__WEBPACK_IMPORTED_MODULE_5__["default"]()
             })],
             view: new ol__WEBPACK_IMPORTED_MODULE_1__["View"]({
               center: [0, 0],
               zoom: 0
             }),
-            controls: Object(ol_control__WEBPACK_IMPORTED_MODULE_6__["defaults"])()
+            controls: Object(ol_control__WEBPACK_IMPORTED_MODULE_4__["defaults"])()
           });
           this.markers = new ol_layer__WEBPACK_IMPORTED_MODULE_2__["Vector"]({
             source: new ol_source_Vector__WEBPACK_IMPORTED_MODULE_3__["default"]({
@@ -2568,7 +2606,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     }();
 
     OpenStreetMapComponent.ɵfac = function OpenStreetMapComponent_Factory(t) {
-      return new (t || OpenStreetMapComponent)();
+      return new (t || OpenStreetMapComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_map_data_service__WEBPACK_IMPORTED_MODULE_7__["MapDataService"]));
     };
 
     OpenStreetMapComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({
@@ -2597,7 +2635,9 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
           styleUrls: ['./open-street-map.component.css']
         }]
       }], function () {
-        return [];
+        return [{
+          type: _map_data_service__WEBPACK_IMPORTED_MODULE_7__["MapDataService"]
+        }];
       }, null);
     })();
     /***/
