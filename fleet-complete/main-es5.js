@@ -896,6 +896,8 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
                 if (_this5.activeObjectList.length > 0) {
                   _this5.objectDisplayInfo.activeObjectStops = stops;
                   _this5.objectDisplayInfo.traveledDistance = (_this5.activeObjectList[_this5.activeObjectList.length - 1].Distance - _this5.activeObjectList[0].Distance).toFixed(2);
+                } else {
+                  if (totalT > 0) _this5.objectDisplayInfo.traveledDistance = totalT.toFixed(2);
                 }
               }
 

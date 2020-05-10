@@ -465,6 +465,10 @@ class AppComponent {
                         this.objectDisplayInfo.traveledDistance =
                             (this.activeObjectList[this.activeObjectList.length - 1].Distance - this.activeObjectList[0].Distance).toFixed(2);
                     }
+                    else {
+                        if (totalT > 0)
+                            this.objectDisplayInfo.traveledDistance = totalT.toFixed(2);
+                    }
                 }
                 this.mapDataService.addVehicleTracks(this.activeObjectList, stops);
             }, error => {
